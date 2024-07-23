@@ -48,7 +48,9 @@ namespace Switchie
 
                 int index = 0;
                 WinAPI.GetWindowThreadProcessId(hWnd, out uint pid);
-                try { index = WindowsVirtualDesktopManager.GetInstance().FromDesktop(WindowsVirtualDesktopManager.GetInstance().FromWindow((IntPtr)hWnd)); }
+                try { 
+                    index = WindowsVirtualDesktopManager.GetInstance().FromDesktop(WindowsVirtualDesktopManager.GetInstance().FromWindow((IntPtr)hWnd)); 
+                }
                 catch
                 {
                     hWndBlacklist.Add(hWnd);
