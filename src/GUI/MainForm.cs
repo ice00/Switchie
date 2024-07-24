@@ -13,7 +13,7 @@ namespace Switchie
 {
     public class MainForm : Form
     {
-        private string version = "v1.1.7";
+        private string version = "v1.1.8";
         private Point dragOffset;
         private bool _isAppPinned = false;
         private int _activeDesktopIndex = 0;
@@ -101,6 +101,39 @@ namespace Switchie
             }    
             return false;
         }        
+
+        private void SaveIntToRegistry(string keyName, int value)
+        {
+            try
+            {
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(@"Software\Switchie", true);
+                key.SetValue(keyName, value);
+                key.Close();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show($"Error saving int to registry: {ex.Message}");
+            }
+        }
+
+        private int ReadIntFromRegistry(string keyName, int missing)
+        {
+            try
+            {
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Switchie");
+                if (key != null)
+                {
+                    int value = (int)key.GetValue(keyName, missing);
+                    key.Close();
+                    return value;
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show($"Error saving int to registry: {ex.Message}");
+            }    
+            return missing;
+        }               
         private void SetPosition()
         {            
             if (top) Location = new System.Drawing.Point((Screen.PrimaryScreen.Bounds.Width / 2) - (Size.Width / 2), Screen.PrimaryScreen.WorkingArea.Top);
@@ -124,7 +157,10 @@ namespace Switchie
             MinimizeBox = false;
             Name = "frmMain";
             TopMost = true;
-            Icon = new System.Drawing.Icon(new MemoryStream(Helpers.GetResourceFromAssembly(typeof(Program), "Switchie.Resources.icon.ico")));
+            Icon = new System.Drawing.Icon(new MemoryStream(Helpers.GetResourceFromAssembly(typeof(Program), "Switchie.Resources.icon.ico")));    
+
+            PagerHeight = ReadIntFromRegistry("Height", PagerHeight);
+
             Enumerable.Range(0, WindowsVirtualDesktop.GetInstance().Count).ToList().ForEach(x =>
             {
                 VirtualDesktop desktop = new VirtualDesktop(x, this, new Point(_virtualDesktops.Sum(y => y.Size.Width), 0));
@@ -139,7 +175,7 @@ namespace Switchie
             MinimumSize = Size;
             MaximumSize = Size;
             ClientSize = Size;
-
+ 
             top = ReadBooleanFromRegistry("TopBottom");
             SetPosition();  // set the bar position on screen
             
@@ -254,7 +290,7 @@ namespace Switchie
                     }
                   }
                 });             
-/*
+
                 Helpers.AddMenuItem(this, menu, new ToolStripMenuItem() 
                 {  Text = "Dimension" }, () => 
                 {  
@@ -300,10 +336,13 @@ namespace Switchie
                     {                        
                         int selectedValue = (int)numericUpDown.Value;
                         PagerHeight = selectedValue;
+
+                        SaveIntToRegistry("Height", PagerHeight);
                         
                         dialog.Close();
 
                         _virtualDesktops.Clear();
+
                         Enumerable.Range(0, WindowsVirtualDesktop.GetInstance().Count).ToList().ForEach(x =>
                         {
                             VirtualDesktop desktop = new VirtualDesktop(x, this, new Point(_virtualDesktops.Sum(y => y.Size.Width), 0));
@@ -314,12 +353,18 @@ namespace Switchie
                             DragDrop += desktop.OnDragDrop;
                             _virtualDesktops.Add(desktop);
                         });
-                        Size = new Size(_virtualDesktops.Sum(x => x.Size.Width), PagerHeight);
-                        MinimumSize = Size;
-                        MaximumSize = Size;
-                        ClientSize = Size;
-                        SetPosition();
+                            
+                        Size tmpSize =  new Size(_virtualDesktops.Sum(x => x.Size.Width), PagerHeight);     
+                        MinimumSize = tmpSize;
+                        MaximumSize = tmpSize;
+                        ClientSize = tmpSize;
+                        Size = tmpSize;
+
+                        top = ReadBooleanFromRegistry("TopBottom");
+                        SetPosition();  // set the bar position on screen
+
                         Invalidate();
+                        Update();
                     };
 
                     dialog.Controls.Add(label);
@@ -328,7 +373,7 @@ namespace Switchie
 
                     dialog.ShowDialog();
                 });
- */   
+    
                 menu.Items.Add(new ToolStripSeparator());   
 
                 Helpers.AddMenuItem(this, menu, new ToolStripMenuItem() { 
