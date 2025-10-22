@@ -16,10 +16,12 @@ namespace Switchie
         {
             if (WindowsVirtualDesktop._instance == null)
             {
-                if (Program.WindowsVersion.IsWin11_23H2())
+                if (Program.WindowsVersion.IsWin11_24H2())
+                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktop();
+                else if (Program.WindowsVersion.IsWin11_23H2())
                     _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktop();
                 else if (Program.WindowsVersion.IsWin11_22H2())
-                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktop();                    
+                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktop();
                 else if (Program.WindowsVersion.IsWin11_21H2())
                     _instance = new Switchie.VirtualDesktopAPI.Win11.WindowsVirtualDesktop();
                 else if (Program.WindowsVersion.IsWin10())
@@ -43,10 +45,12 @@ namespace Switchie
         {
             if (WindowsVirtualDesktopManager._instance == null)
             {
-                if (Program.WindowsVersion.IsWin11_23H2())
+                if (Program.WindowsVersion.IsWin11_24H2())
+                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktopManager();
+                else if (Program.WindowsVersion.IsWin11_23H2())
                     _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktopManager();
                 else if (Program.WindowsVersion.IsWin11_22H2())
-                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktopManager();                    
+                    _instance = new Switchie.VirtualDesktopAPI.Win11_.WindowsVirtualDesktopManager();
                 else if (Program.WindowsVersion.IsWin11_21H2())
                     _instance = new Switchie.VirtualDesktopAPI.Win11.WindowsVirtualDesktopManager();
                 else if (Program.WindowsVersion.IsWin10())

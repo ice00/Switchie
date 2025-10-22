@@ -13,7 +13,7 @@ namespace Switchie
 {
     public class MainForm : Form
     {
-        private string version = "v1.1.8";
+        private string version = "v1.1.9";
         private Point dragOffset;
         private bool _isAppPinned = false;
         private int _activeDesktopIndex = 0;

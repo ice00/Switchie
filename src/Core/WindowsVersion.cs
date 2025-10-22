@@ -24,6 +24,7 @@ namespace Switchie
         // Microsoft Windows [Version 10.0.19043.1288] (Windows 10)
         // Microsoft Windows [Version 10.0.17763.2237] (Windows 10 LTSC)
 
+        public bool IsWin11_24H2() => Major == 10 && Minor == 0 && Build >= 26100 && Name == "24H2";
         public bool IsWin11_23H2() => Major == 10 && Minor == 0 && Build >= 22631 && Name == "23H2";
         public bool IsWin11_22H2() => Major == 10 && Minor == 0 && Build >= 22621 && Name == "22H2";
         public bool IsWin11_21H2() => Major == 10 && Minor == 0 && Build >= 22000 && Name == "21H2";
